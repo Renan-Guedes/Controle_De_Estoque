@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Movimentação de Estoque{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Nova Movimentação de Estoque</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.produto.id_for_label }}" class="form-label">Produto</label>
+                        {{ form.produto }}
+                        {% if form.produto.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.produto.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.tipo_movimento.id_for_label }}" class="form-label">Tipo de Movimentação</label>
+                        {{ form.tipo_movimento }}
+                        {% if form.tipo_movimento.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.tipo_movimento.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.quantidade.id_for_label }}" class="form-label">Quantidade</label>
+                        {{ form.quantidade }}
+                        {% if form.quantidade.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.quantidade.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.descricao.id_for_label }}" class="form-label">Observações</label>
+                        {{ form.descricao }}
+                        {% if form.descricao.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.descricao.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Registrar Movimentação</button>
+                        <a href="{% url 'inventario:home' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

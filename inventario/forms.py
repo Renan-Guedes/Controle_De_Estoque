@@ -123,4 +123,4 @@ class MovimentoEstoqueForm(forms.ModelForm):
     
     class Meta:
         model = MovimentoEstoque
-        fields = ['produto', 'tipo_movimento', 'quantidade']
+        fields = ['produto', 'tipo_movimento', 'quantidade', 'descricao']

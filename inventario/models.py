@@ -1,6 +1,8 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models import F
+from django.core.exceptions import ValidationError
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
@@ -94,10 +96,35 @@ class MovimentoEstoque(models.Model):
     data_movimento = models.DateTimeField(auto_now_add=True)
     descricao = models.TextField(blank=True, null=True)
     
+    def _effect(self, tipo: str, quantidade: int) -> int:
+        return quantidade if tipo == 'entrada' else -quantidade
+
+    def clean(self):
+        super().clean()
+        if self.quantidade is None or self.quantidade < 0:
+            raise ValidationError({'quantidade': 'Quantidade deve ser 0 ou positiva.'})
+        if self.tipo_movimento not in dict(self.TIPOS_MOVIMENTO):
+            raise ValidationError({'tipo_movimento': 'Tipo de movimento inválido.'})
+
     def save(self, *args, **kwargs):
-        if self.tipo_movimento == 'entrada':
-            self.produto.quantidade_atual += self.quantidade
-        elif self.tipo_movimento == 'saida':
-            self.produto.quantidade_atual -= self.quantidade
-        self.produto.save()
+
+        prod = Produto.objects.select_for_update().get(pk=self.produto_id)
+        delta = self._effect(self.tipo_movimento, self.quantidade)
+        if prod.quantidade_atual + delta < 0:
+            raise ValidationError('Operação resultaria em estoque negativo.')
+        Produto.objects.filter(pk=prod.pk).update(
+            quantidade_atual=F('quantidade_atual') + delta
+        )
+
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        with transaction.atomic():
+            prod = Produto.objects.select_for_update().get(pk=self.produto_id)
+            delta = -self._effect(self.tipo_movimento, self.quantidade)
+            if prod.quantidade_atual + delta < 0:
+                raise ValidationError('Exclusão resultaria em estoque negativo.')
+            Produto.objects.filter(pk=prod.pk).update(
+                quantidade_atual=F('quantidade_atual') + delta
+            )
+            super().delete(*args, **kwargs)

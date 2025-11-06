@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Produto, LimiteProduto
-from .forms import LimiteProdutoForm, ProdutoForm, RegistrationForm
+from .forms import LimiteProdutoForm, MovimentoEstoqueForm, ProdutoForm, RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -106,3 +106,15 @@ def limite_produto(request, pk):
         'form': form,
         'produto': produto
     })
+    
+@login_required
+def movimentacao_estoque(request):
+    if request.method == 'POST':
+        form = MovimentoEstoqueForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Movimento de estoque registrado com sucesso.')
+            return redirect('inventario:home')
+    else:
+        form = MovimentoEstoqueForm()
+    return render(request, 'inventario/movimentacao_estoque.html', {'form': form})
