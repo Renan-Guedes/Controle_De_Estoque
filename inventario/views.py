@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Produto, LimiteProduto
 from .forms import ProdutoForm, RegistrationForm
 from django.contrib import messages
@@ -61,4 +61,24 @@ def criar_produto(request):
             messages.error(request, f'Por favor, corrija os erros abaixo: {form.errors}')
     else:
         form = ProdutoForm()
-    return render(request, 'inventario/criar_produto.html', {'form': form})
+    return render(request, 'inventario/produto_form.html', {'form': form})
+
+@login_required
+def editar_produto(request, pk):
+    product = get_object_or_404(Produto, pk=pk)
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto atualizado com sucesso.')
+            return redirect('inventario:home')
+    else:
+        form = ProdutoForm(instance=product)
+    return render(request, 'inventario/produto_form.html', {'form': form})
+
+@login_required
+def deletar_produto(request, pk):
+    product = get_object_or_404(Produto, pk=pk)
+    product.delete()
+    messages.success(request, 'Produto excluído com sucesso.')
+    return redirect('inventario:home')

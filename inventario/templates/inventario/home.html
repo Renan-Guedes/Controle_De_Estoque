@@ -51,7 +51,7 @@
                         <span class="badge bg-success">Ideal</span>
                     {% elif produto.status == 'normal' %}
                         <span class="badge bg-warning">Normal</span>
-                    {% elif produto.status == 'low' %}
+                    {% elif produto.status == 'baixo' %}
                         <span class="badge bg-danger">Baixo</span>
                     {% else %}
                         <span class="badge bg-secondary">Limite não definido</span>
@@ -59,9 +59,9 @@
                 </td>
                 <td>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'inventario:editar_produto' produto.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
                         <a href="#" class="btn btn-sm btn-outline-info">Limites</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                        <a href="{% url 'inventario:deletar_produto' produto.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
                     </div>
                 </td>
             </tr>
