@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Definir Limites - {{ produto.nome }}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Definir Limites para {{ produto.nome }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.tipo_limite.id_for_label }}" class="form-label">Tipo de Limite</label>
+                        {{ form.tipo_limite }}
+                        {% if form.tipo_limite.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.tipo_limite.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.limite_ideal.id_for_label }}" class="form-label">Limite Ideal</label>
+                        {{ form.limite_ideal }}
+                        {% if form.limite_ideal.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.limite_ideal.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Quantidade acima deste valor será considerada "ideal"
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.limite_minimo.id_for_label }}" class="form-label">Limite Mínimo</label>
+                        {{ form.limite_minimo }}
+                        {% if form.limite_minimo.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.limite_minimo.errors }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            Quantidade abaixo deste valor será considerada "baixa"
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Salvar Limites</button>
+                        <a href="{% url 'inventario:home' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

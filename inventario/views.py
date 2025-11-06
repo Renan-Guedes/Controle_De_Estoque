@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Produto, LimiteProduto
-from .forms import ProdutoForm, RegistrationForm
+from .forms import LimiteProdutoForm, ProdutoForm, RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -65,20 +65,44 @@ def criar_produto(request):
 
 @login_required
 def editar_produto(request, pk):
-    product = get_object_or_404(Produto, pk=pk)
+    produto = get_object_or_404(Produto, pk=pk)
     if request.method == 'POST':
-        form = ProdutoForm(request.POST, instance=product)
+        form = ProdutoForm(request.POST, instance=produto)
         if form.is_valid():
             form.save()
             messages.success(request, 'Produto atualizado com sucesso.')
             return redirect('inventario:home')
     else:
-        form = ProdutoForm(instance=product)
+        form = ProdutoForm(instance=produto)
     return render(request, 'inventario/produto_form.html', {'form': form})
 
 @login_required
 def deletar_produto(request, pk):
-    product = get_object_or_404(Produto, pk=pk)
-    product.delete()
+    produto = get_object_or_404(Produto, pk=pk)
+    produto.delete()
     messages.success(request, 'Produto excluído com sucesso.')
     return redirect('inventario:home')
+
+@login_required
+def limite_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk)
+    try:
+        limite = produto.limite
+    except LimiteProduto.DoesNotExist:
+        limite = None
+
+    if request.method == 'POST':
+        form = LimiteProdutoForm(request.POST, instance=limite)
+        if form.is_valid():
+            limite = form.save(commit=False)
+            limite.produto = produto
+            limite.save()
+            messages.success(request, 'Limites do produto atualizados com sucesso.')
+            return redirect('inventario:home')
+    else:
+        form = LimiteProdutoForm(instance=limite)
+
+    return render(request, 'inventario/produto_limite.html', {
+        'form': form,
+        'produto': produto
+    })
