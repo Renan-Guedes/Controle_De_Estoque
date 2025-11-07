@@ -25,11 +25,11 @@ def logout_view(request):
 
 @login_required
 def home(request):
-    lista_produtos = Produto.objects.filter(ativo=True, deletado_em__isnull=True).order_by('nome')
+    listar_produtos = Produto.objects.filter(ativo=True, deletado_em__isnull=True).order_by('nome')
     
     # Paginação
     itens_por_pagina = request.GET.get('itens_por_pagina', 10)
-    paginator = Paginator(lista_produtos, itens_por_pagina)
+    paginator = Paginator(listar_produtos, itens_por_pagina)
     pagina = request.GET.get('pagina')
     produtos = paginator.get_page(pagina)
     
@@ -46,6 +46,18 @@ def home(request):
     contexto = {'produtos': produtos, 'itens_por_pagina': itens_por_pagina}
     
     return render(request, 'inventario/home.html', contexto)
+
+@login_required
+def listar_produtos(request):
+    produtos = Produto.objects.filter(deletado_em__isnull=True).order_by('nome')
+    for produto in produtos:
+        try:
+            limite = produto.limite
+            status = limite.get_status(produto.quantidade_atual)
+        except LimiteProduto.DoesNotExist:
+            status = 'Sem limite definido'
+        produto.status = status
+    return render(request, 'inventario/produto_lista.html', {'produtos': produtos})
 
 @login_required
 def criar_produto(request):
@@ -120,7 +132,7 @@ def movimentacao_estoque(request):
     return render(request, 'inventario/movimentacao_estoque.html', {'form': form})
 
 @login_required
-def lista_categorias(request):
+def listar_categorias(request):
     categorias = Categoria.objects.filter(deletado_em__isnull=True)
     return render(request, 'inventario/categoria_lista.html', {'categorias': categorias})
 
@@ -135,7 +147,7 @@ def criar_categoria(request):
             categoria.deletado_em = None
             categoria.save()
             messages.success(request, 'Categoria criada com sucesso.')
-            return redirect('inventario:lista_categorias')
+            return redirect('inventario:listar_categorias')
     else:
         form = CategoriaForm()
     return render(request, 'inventario/categoria_form.html', {'form': form})
@@ -148,7 +160,7 @@ def editar_categoria(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Categoria atualizada com sucesso.')
-            return redirect('inventario:lista_categorias')
+            return redirect('inventario:listar_categorias')
     else:
         form = CategoriaForm(instance=categoria)
     return render(request, 'inventario/categoria_form.html', {'form': form})
@@ -158,4 +170,4 @@ def deletar_categoria(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk)
     categoria.delete()
     messages.success(request, 'Categoria excluída com sucesso.')
-    return redirect('inventario:lista_categorias')
+    return redirect('inventario:listar_categorias')

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Produtos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Lista de Produtos</h2>
+    <a href="{% url 'inventario:criar_produto' %}" class="btn btn-primary">Novo Produto</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>SKU</th>
+                <th>Categoria</th>
+                <th>Quantidade</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.nome }}</td>
+                <td>{{ produto.sku|default:"-" }}</td>
+                <td>{{ produto.categoria|default:"-" }}</td>
+                <td>{{ produto.quantidade_atual }}</td>
+                <td>
+                    {% if produto.status == 'ideal' %}
+                        <span class="badge bg-success">Ideal</span>
+                    {% elif produto.status == 'normal' %}
+                        <span class="badge bg-warning">Normal</span>
+                    {% elif produto.status == 'baixo' %}
+                        <span class="badge bg-danger">Baixo</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Limite não definido</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{% url 'inventario:editar_produto' produto.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'inventario:limite_produto' produto.pk %}" class="btn btn-sm btn-outline-info">Limites</a>
+                        <a href="{% url 'inventario:deletar_produto' produto.pk %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">Nenhum produto cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

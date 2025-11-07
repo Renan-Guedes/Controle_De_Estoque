@@ -15,12 +15,13 @@ urlpatterns = [
     path('produto/<int:pk>/editar/', views.editar_produto, name='editar_produto'),
     path('produto/<int:pk>/deletar/', views.deletar_produto, name='deletar_produto'),
     path('produto/<int:pk>/limite/', views.limite_produto, name='limite_produto'),
+    path('produtos/', views.listar_produtos, name='listar_produtos'),
     
     # Movimento de Estoque
     path('movimentacao_estoque/', views.movimentacao_estoque, name='movimentacao_estoque'),
     
     # Categorias
-    path('categorias/', views.lista_categorias, name='lista_categorias'),
+    path('categorias/', views.listar_categorias, name='listar_categorias'),
     path('categorias/criar/', views.criar_categoria, name='criar_categoria'),
     path('categorias/<int:pk>/editar/', views.editar_categoria, name='editar_categoria'),
     path('categorias/<int:pk>/deletar/', views.deletar_categoria, name='deletar_categoria'),

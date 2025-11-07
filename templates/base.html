@@ -30,18 +30,15 @@
               <a class="nav-link" href="{% url 'inventario:home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'inventario:lista_categorias' %}">Categorias</a>
+              <a class="nav-link" href="{% url 'inventario:listar_produtos' %}">Produtos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'inventario:listar_categorias' %}">Categorias</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'inventario:movimentacao_estoque' %}">Movimentações</a>
             </li>
           </ul>
-            {% comment %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'product_list' %}">Produtos</a>
-            </li>
-          </ul>
-          {% endcomment %} 
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'inventario:logout' %}">Sair</a>
