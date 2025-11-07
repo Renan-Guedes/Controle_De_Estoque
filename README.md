@@ -28,7 +28,6 @@ projeto/
 │   ├── views.py             # Lógica de negócios e fluxos (CRUD, movimentos)
 │   ├── forms.py             # Formulários
 │   ├── urls.py              # Rotas
-│   ├── tests.py             #
 │   ├── migrations/          # Histórico de migrações
 │   └── templates/inventario/# Templates específicos do app
 │       ├── home.html
